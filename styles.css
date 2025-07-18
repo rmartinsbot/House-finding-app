@@ -1,136 +1,76 @@
+/* Fonte e layout base */
 body {
-  font-family: 'Segoe UI', sans-serif;
-  background: #f4f6f9;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+  background-color: #f2f2f2;
   margin: 0;
   padding: 1rem;
+  color: #333;
 }
 
-main {
-  max-width: 500px;
-  margin: auto;
-  background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-h1, h2 {
+/* Títulos */
+h1, h2, h3 {
   text-align: center;
-  color: #2c3e50;
+  color: #004aad;
 }
 
+/* Inputs e botões */
 input, button {
   width: 100%;
-  margin: 0.5rem 0;
-  padding: 0.8rem;
+  max-width: 400px;
+  display: block;
+  margin: 0.5rem auto;
+  padding: 0.75rem;
   border-radius: 8px;
   border: 1px solid #ccc;
   font-size: 1rem;
-}
-
-button {
-  background: #3498db;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-button:hover {
-  background: #2980b9;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-}
-
-li {
-  background: #ecf0f1;
-  margin: 0.5rem 0;
-  padding: 1rem;
-  border-radius: 8px;
-}* {
   box-sizing: border-box;
 }
 
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 20px;
-  background: #fefefe;
-  color: #222;
-}
-
-header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-h1 {
-  font-size: 1.8rem;
-}
-
-input[type="text"] {
-  width: 100%;
-  padding: 12px 10px;
-  font-size: 1rem;
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-}
-
-ul#listings {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-ul#listings li {
-  background: #e3f2fd;
-  border-radius: 10px;
-  padding: 15px;
-  margin-bottom: 12px;
-  box-shadow: 0 1px 4px rgb(0 0 0 / 0.1);
-}
-
-ul#listings li h3 {
-  margin: 0 0 6px 0;
-}
-
-ul#listings li p {
-  margin: 3px 0;
-  font-size: 0.9rem;
-  color: #555;
-}
-
 button {
-  background-color: #2196f3;
+  background-color: #004aad;
   color: white;
   border: none;
-  padding: 12px 18px;
-  border-radius: 8px;
-  font-size: 1rem;
   cursor: pointer;
-  margin-top: 10px;
-  transition: background-color 0.3s ease;
+  transition: background 0.3s ease;
 }
 
 button:hover {
-  background-color: #1769aa;
+  background-color: #00357f;
 }
 
-#addForm {
-  margin-top: 20px;
-  background: #f1f8ff;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 0 8px rgb(33 150 243 / 0.3);
+/* Área de listagem */
+#listings {
+  margin-top: 2rem;
 }
 
-#addForm input[type="text"] {
-  margin-bottom: 10px;
+/* Cartões de imóveis */
+.listing {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.hidden {
-  display: none;
+.listing img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
 }
+
+/* Responsividade extra */
+@media (min-width: 600px) {
+  body {
+    padding: 2rem;
+  }
+
+  input, button {
+    font-size: 1.1rem;
+  }
+}
+  
+  
