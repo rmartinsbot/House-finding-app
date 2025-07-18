@@ -1,105 +1,79 @@
-function addListing() {
-  const title = document.getElementById('title').value;
-  const location = document.getElementById('location').value;
-  const price = document.getElementById('price').value;
-  const amenities = document.getElementById('amenities').value.split(',');
-  
-  const user = firebase.auth().currentUser;
-  if (!user) return;
 
-  db.ref('listings').push({
-    userId: user.uid,  // ← ISTO é essencial!
-    title,
-    location,
-    price,
-    amenities
-  });
-}function toggleForm() {
-  document.getElementById('login-screen').style.display =
-    document.getElementById('login-screen').style.display === 'none' ? 'block' : 'none';
-  document.getElementById('register-screen').style.display =
-    document.getElementById('register-screen').style.display === 'none' ? 'block' : 'none';
-}
+// Mostrar ou esconder a app com base no estado do utilizador
+firebase.auth().onAuthStateChanged(user => {
+  if (user) {
+    document.getElementById('auth').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadListings();
+  } else {
+    document.getElementById('auth').style.display = 'block';
+    document.getElementById('app').style.display = 'none';
+  }
+});
 
+// Registar novo utilizador
 function register() {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
 
   firebase.auth().createUserWithEmailAndPassword(email, password)
-    .then(() => {
-      alert('Conta criada com sucesso!');
-      showApp(); // mostra o conteúdo da app
-    })
-    .catch(error => {
-      alert('Erro ao criar conta: ' + error.message);
-    });
+    .then(() => alert('Conta criada com sucesso!'))
+    .catch(error => alert('Erro ao criar conta: ' + error.message));
 }
 
+// Iniciar sessão
 function login() {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
-  auth.signInWithEmailAndPassword(email, password)
-    .then(() => showApp())
-    .catch(err => alert(err.message));
+
+  firebase.auth().signInWithEmailAndPassword(email, password)
+    .catch(error => alert('Erro ao iniciar sessão: ' + error.message));
 }
 
+// Terminar sessão
 function logout() {
-  auth.signOut().then(() => showLogin());
+  firebase.auth().signOut();
 }
 
-auth.onAuthStateChanged(user => {
-  if (user) showApp();
-  else showLogin();
-});
-
-function showApp() {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('register-screen').style.display = 'none';
-  document.getElementById('app-screen').style.display = 'block';
-  loadListings();
-}
-
-function showLogin() {
-  document.getElementById('app-screen').style.display = 'none';
-  document.getElementById('login-screen').style.display = 'block';
-}
-
+// Adicionar um novo imóvel
 function addListing() {
   const title = document.getElementById('title').value;
   const location = document.getElementById('location').value;
   const price = document.getElementById('price').value;
   const amenities = document.getElementById('amenities').value.split(',');
 
-  const user = auth.currentUser;
-  if (!user) return;
+  const userId = firebase.auth().currentUser.uid;
 
-  db.ref('listings').push({
-    userId: user.uid,
+  firebase.database().ref('listings').push({
     title,
     location,
     price,
-    amenities
+    amenities,
+    userId
+  }).then(() => {
+    alert('Imóvel guardado!');
+    loadListings();
+  }).catch(error => {
+    alert('Erro ao guardar imóvel: ' + error.message);
   });
-  loadListings();
 }
 
+// Carregar imóveis do utilizador autenticado
 function loadListings() {
-  const user = firebase.auth().currentUser;
-  if (!user) return;
+  const userId = firebase.auth().currentUser.uid;
+  const listingsRef = firebase.database().ref('listings');
+  const listingsDiv = document.getElementById('listings');
 
-  const listingsRef = db.ref('listings');
-  listingsRef.once('value', (snapshot) => {
-    const listings = snapshot.val();
-    const container = document.getElementById('listings');
-    container.innerHTML = '';
+  listingsRef.once('value', snapshot => {
+    listingsDiv.innerHTML = '';
 
-    for (let id in listings) {
-      const listing = listings[id];
+    snapshot.forEach(child => {
+      const listing = child.val();
+      const id = child.key;
 
-      // Mostrar só os imóveis do utilizador atual
-      if (listing.userId === user.uid) {
+      if (listing.userId === userId) {
         const div = document.createElement('div');
-        div.classList.add('listing');
+        div.className = 'listing';
         div.innerHTML = `
           <h3>${listing.title}</h3>
           <p><strong>Localização:</strong> ${listing.location}</p>
@@ -107,47 +81,19 @@ function loadListings() {
           <p><strong>Comodidades:</strong> ${listing.amenities.join(', ')}</p>
           <button onclick="removeListing('${id}')">Remover</button>
         `;
-        container.appendChild(div);
+        listingsDiv.appendChild(div);
       }
-    }
+    });
   });
 }
 
-function filterListings() {
-  const query = document.getElementById('search').value.toLowerCase();
-  const listings = document.querySelectorAll('#listings li');
-  listings.forEach(li => {
-    li.style.display = li.textContent.toLowerCase().includes(query) ? 'block' : 'none';
-  });
-}
+// Remover imóvel
 function removeListing(id) {
-  const user = firebase.auth().currentUser;
-  if (!user) return;
-
-  const ref = db.ref(`listings/${id}`);
-
-  ref.once('value', (snapshot) => {
-    const data = snapshot.val();
-
-    if (data.userId === user.uid) {
-      ref.remove()
-        .then(() => {
-          alert('Imóvel removido.');
-          loadListings(); // Atualiza a lista
-        })
-        .catch(err => {
-          console.error(err);
-          alert('Erro ao remover.');
-        });
-    } else {
-      alert('Não tens permissão para remover este imóvel.');
-    }
-  });
+  firebase.database().ref('listings/' + id).remove()
+    .then(() => {
+      alert('Imóvel removido!');
+      loadListings();
+    });
 }
-div.innerHTML = `
-  <h3>${listing.title}</h3>
-  <p><strong>Localização:</strong> ${listing.location}</p>
-  <p><strong>Preço:</strong> ${listing.price}€</p>
-  <p><strong>Comodidades:</strong> ${listing.amenities.join(', ')}</p>
-  <button onclick="removeListing('${id}')">Remover</button>
-`;
+
+  
