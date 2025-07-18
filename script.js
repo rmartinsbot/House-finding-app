@@ -78,15 +78,32 @@ function addListing() {
 }
 
 function loadListings() {
-  const listingsEl = document.getElementById('listings');
-  listingsEl.innerHTML = '';
-  db.ref('listings').once('value', snapshot => {
-    snapshot.forEach(child => {
-      const item = child.val();
-      const li = document.createElement('li');
-      li.innerHTML = `<strong>${item.title}</strong><br/>${item.location} - ${item.price}<br/><small>${item.amenities?.join(', ')}</small>`;
-      listingsEl.appendChild(li);
-    });
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+
+  const listingsRef = db.ref('listings');
+  listingsRef.once('value', (snapshot) => {
+    const listings = snapshot.val();
+    const container = document.getElementById('listings');
+    container.innerHTML = '';
+
+    for (let id in listings) {
+      const listing = listings[id];
+
+      // Mostrar só os imóveis do utilizador atual
+      if (listing.userId === user.uid) {
+        const div = document.createElement('div');
+        div.classList.add('listing');
+        div.innerHTML = `
+          <h3>${listing.title}</h3>
+          <p><strong>Localização:</strong> ${listing.location}</p>
+          <p><strong>Preço:</strong> ${listing.price}€</p>
+          <p><strong>Comodidades:</strong> ${listing.amenities.join(', ')}</p>
+          <button onclick="removeListing('${id}')">Remover</button>
+        `;
+        container.appendChild(div);
+      }
+    }
   });
 }
 
@@ -95,5 +112,29 @@ function filterListings() {
   const listings = document.querySelectorAll('#listings li');
   listings.forEach(li => {
     li.style.display = li.textContent.toLowerCase().includes(query) ? 'block' : 'none';
+  });
+}
+function removeListing(id) {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+
+  const ref = db.ref(`listings/${id}`);
+
+  ref.once('value', (snapshot) => {
+    const data = snapshot.val();
+
+    if (data.userId === user.uid) {
+      ref.remove()
+        .then(() => {
+          alert('Imóvel removido.');
+          loadListings(); // Atualiza a lista
+        })
+        .catch(err => {
+          console.error(err);
+          alert('Erro ao remover.');
+        });
+    } else {
+      alert('Não tens permissão para remover este imóvel.');
+    }
   });
 }
