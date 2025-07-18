@@ -22,11 +22,17 @@ function addListing() {
 }
 
 function register() {
-  const email = document.getElementById('reg-email').value;
-  const password = document.getElementById('reg-password').value;
-  auth.createUserWithEmailAndPassword(email, password)
-    .then(() => alert('Conta criada!'))
-    .catch(err => alert(err.message));
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+
+  firebase.auth().createUserWithEmailAndPassword(email, password)
+    .then(() => {
+      alert('Conta criada com sucesso!');
+      showApp(); // mostra o conteúdo da app
+    })
+    .catch(error => {
+      alert('Erro ao criar conta: ' + error.message);
+    });
 }
 
 function login() {
