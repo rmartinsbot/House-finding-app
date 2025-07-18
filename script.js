@@ -1,4 +1,20 @@
-function toggleForm() {
+function addListing() {
+  const title = document.getElementById('title').value;
+  const location = document.getElementById('location').value;
+  const price = document.getElementById('price').value;
+  const amenities = document.getElementById('amenities').value.split(',');
+  
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+
+  db.ref('listings').push({
+    userId: user.uid,  // ← ISTO é essencial!
+    title,
+    location,
+    price,
+    amenities
+  });
+}function toggleForm() {
   document.getElementById('login-screen').style.display =
     document.getElementById('login-screen').style.display === 'none' ? 'block' : 'none';
   document.getElementById('register-screen').style.display =
