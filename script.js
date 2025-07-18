@@ -138,3 +138,10 @@ function removeListing(id) {
     }
   });
 }
+div.innerHTML = `
+  <h3>${listing.title}</h3>
+  <p><strong>Localização:</strong> ${listing.location}</p>
+  <p><strong>Preço:</strong> ${listing.price}€</p>
+  <p><strong>Comodidades:</strong> ${listing.amenities.join(', ')}</p>
+  <button onclick="removeListing('${id}')">Remover</button>
+`;
