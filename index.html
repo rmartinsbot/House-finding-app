@@ -1,65 +1,43 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Caça Casas</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <script defer src="firebase-config.js"></script>
-  <script defer src="script.js"></script>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main>
-    <h1>🏡 Caça Casas</h1>
+  <h1>🏠 Caça Casas</h1>
 
-    <!-- Login -->
-    <div id="login-screen">
-      <h2>Iniciar Sessão</h2>
-      <input id="email" type="email" placeholder="Email" />
-      <input id="password" type="password" placeholder="Palavra-passe" />
-      <button onclick="login()">Entrar</button>
-      <p>Ainda não tens conta? <a href="#" onclick="toggleForm()">Regista-te</a></p>
-    </div>
+  <!-- Autenticação -->
+  <div id="auth">
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Palavra-passe">
+    <button onclick="login()">Entrar</button>
+    <button onclick="register()">Criar Conta</button>
+    <button onclick="logout()">Sair</button>
+  </div>
 
-    <!-- Registo -->
-    <div id="register-screen" style="display:none">
-      <h2>Registar Conta</h2>
-      <input id="reg-email" type="email" placeholder="Email" />
-      <input id="reg-password" type="password" placeholder="Palavra-passe" />
-      <button onclick="register()">Criar Conta</button>
-      <p>Já tens conta? <a href="#" onclick="toggleForm()">Entrar</a></p>
-    </div>
+  <!-- Área principal da aplicação -->
+  <div id="app" style="display: none;">
+    <h2>Os teus imóveis</h2>
+    <div id="listings"></div>
 
-    <!-- App principal -->
-    <div id="app-screen" style="display:none">
-      <button onclick="logout()">Sair</button>
-      <input id="search" type="text" placeholder="Procurar local ou tipo..." oninput="filterListings()" />
-      <ul id="listings"></ul>
+    <h3>Adicionar imóvel</h3>
+    <input id="title" placeholder="Título do imóvel">
+    <input id="location" placeholder="Localização">
+    <input id="price" placeholder="Preço">
+    <input id="amenities" placeholder="Comodidades (separadas por vírgula)">
+    <button onclick="addListing()">Guardar imóvel</button>
+  </div>
 
-      <h3>Adicionar imóvel</h3>
-      <input id="title" placeholder="Título" />
-      <input id="location" placeholder="Localidade" />
-      <input id="price" placeholder="Preço" />
-      <input id="amenities" placeholder="Comodidades (vírgula separadas)" />
-      <button onclick="addListing()">Guardar</button>
-    </div>
-  </main>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+  <!-- Configuração e lógica -->
+  <script src="firebase-config.js"></script>
+  <script src="script.js"></script>
 </body>
-</html><h1>🏠 Procurar Casa</h1>
-...
-<input placeholder="Procurar por local ou tipo..." />
-...
-<button>➕ Adicionar imóvel</button>
-<h2>Adicionar novo imóvel</h2>
-<input placeholder="Título" />
-<input placeholder="Localidade" />
-<input placeholder="Preço (ex: 1.200€/mês)" />
-<input placeholder="Comodidades (separadas por vírgulas)" />
-<button>Guardar</button>
-<button>Cancelar</button>
-<script src="firebase-config.js"></script>
-<script src="script.js"></script>
-<button onclick="register()">Criar Conta</button>
+  </html>
