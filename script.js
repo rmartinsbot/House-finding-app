@@ -1,5 +1,4 @@
-
-// Mostrar ou esconder a app com base no estado do utilizador
+// Iniciar autenticação
 firebase.auth().onAuthStateChanged(user => {
   if (user) {
     document.getElementById('auth').style.display = 'none';
@@ -11,23 +10,29 @@ firebase.auth().onAuthStateChanged(user => {
   }
 });
 
-// Registar novo utilizador
+// Função para registar novo utilizador
 function register() {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
 
   firebase.auth().createUserWithEmailAndPassword(email, password)
-    .then(() => alert('Conta criada com sucesso!'))
-    .catch(error => alert('Erro ao criar conta: ' + error.message));
+    .then(() => {
+      alert("Conta criada com sucesso!");
+    })
+    .catch(error => {
+      alert("Erro ao registar: " + error.message);
+    });
 }
 
-// Iniciar sessão
+// Função para iniciar sessão
 function login() {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
 
   firebase.auth().signInWithEmailAndPassword(email, password)
-    .catch(error => alert('Erro ao iniciar sessão: ' + error.message));
+    .catch(error => {
+      alert("Erro ao entrar: " + error.message);
+    });
 }
 
 // Terminar sessão
@@ -35,7 +40,7 @@ function logout() {
   firebase.auth().signOut();
 }
 
-// Adicionar um novo imóvel
+// Adicionar novo imóvel
 function addListing() {
   const title = document.getElementById('title').value;
   const location = document.getElementById('location').value;
@@ -45,20 +50,18 @@ function addListing() {
   const userId = firebase.auth().currentUser.uid;
 
   firebase.database().ref('listings').push({
+    userId,
     title,
     location,
     price,
-    amenities,
-    userId
-  }).then(() => {
-    alert('Imóvel guardado!');
-    loadListings();
-  }).catch(error => {
-    alert('Erro ao guardar imóvel: ' + error.message);
+    amenities
   });
+
+  alert("Imóvel adicionado!");
+  loadListings();
 }
 
-// Carregar imóveis do utilizador autenticado
+// Listar imóveis do utilizador
 function loadListings() {
   const userId = firebase.auth().currentUser.uid;
   const listingsRef = firebase.database().ref('listings');
@@ -74,7 +77,11 @@ function loadListings() {
       if (listing.userId === userId) {
         const div = document.createElement('div');
         div.className = 'listing';
+
+        const randomImageUrl = `https://source.unsplash.com/400x200/?house,home&sig=${Math.random()}`;
+
         div.innerHTML = `
+          <img src="${randomImageUrl}" alt="Imagem do imóvel">
           <h3>${listing.title}</h3>
           <p><strong>Localização:</strong> ${listing.location}</p>
           <p><strong>Preço:</strong> ${listing.price}€</p>
@@ -90,19 +97,16 @@ function loadListings() {
 // Remover imóvel
 function removeListing(id) {
   firebase.database().ref('listings/' + id).remove()
-    .then(() => {
-      alert('Imóvel removido!');
-      loadListings();
-    });
+    .then(() => loadListings());
 }
+
+// Tema escuro
 function toggleTheme() {
   document.body.classList.toggle("dark");
   localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
 }
 
-// Carrega o tema guardado
 window.onload = () => {
   const saved = localStorage.getItem("theme");
   if (saved === "dark") document.body.classList.add("dark");
 };
-  
